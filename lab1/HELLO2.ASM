@@ -25,7 +25,8 @@ DATA      ENDS
 ; Код программы
 
 CODE      SEGMENT
-          ASSUME CS:CODE, DS:DATA, SS:AStack
+          ;ASSUME CS:CODE, DS:DATA, SS:AStack
+          ASSUME CS:CODE
 
 ; Процедура печати строки
 WriteMsg  PROC  NEAR

@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:05:46
+Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:47:48
                                                              Page     1-1
 
 
@@ -56,7 +56,7 @@
 				Й
 				;  Регистровая адресация
  0009  B8 01F4			          mov  ax,n1
-Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:05:46
+Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:47:48
                                                              Page     1-2
 
 
@@ -70,51 +70,74 @@
 				;  Косвенная адресация
  001E  8A 07			          mov  al,[bx]
 				;          mov  mem3,[bx]
+				; TODO
+ 0020  8B 07			mov ax, [bx]
+ 0022  A3 0004 R		mov mem3, ax
 				;  Базированная адресация
- 0020  8A 47 03			          mov  al,[bx]+3
- 0023  8B 4F 03			          mov  cx,3[bx]
+ 0025  8A 47 03			          mov  al,[bx]+3
+ 0028  8B 4F 03			          mov  cx,3[bx]
 				;  Индексированная адресация
- 0026  BF 0002			          mov  di,ind
- 0029  8A 85 000E R		          mov  al,vec2[di]
- 002D  8B 8D 000E R		          mov  cx,vec2[di]
-LR2_COMP.ASM(61): warning A4031: Operand types must match
+ 002B  BF 0002			          mov  di,ind
+ 002E  8A 85 000E R		          mov  al,vec2[di]
+ 0032  8B 8D 000E R		          mov  cx,vec2[di]
+LR2ERR.ASM(64): warning A4031: Operand types must match
 				;  Адресация с базированием и индексированием
- 0031  BB 0003			          mov  bx,3
- 0034  8A 81 0016 R		          mov  al,matr[bx][di]
- 0038  8B 89 0016 R		          mov  cx,matr[bx][di]
-LR2_COMP.ASM(65): warning A4031: Operand types must match
+ 0036  BB 0003			          mov  bx,3
+ 0039  8A 81 0016 R		          mov  al,matr[bx][di]
+ 003D  8B 89 0016 R		          mov  cx,matr[bx][di]
+LR2ERR.ASM(68): warning A4031: Operand types must match
 				;          mov  ax,matr[bx*4][di]
+				; TODO
+ 0041  8B C3			mov ax, bx
+ 0043  E0			shl ax,2
+LR2ERR.ASM(72): error A2052: Improper operand type
+ 0044  8B 85 0016 R		mov ax,matr[ax][di]
+LR2ERR.ASM(73): error A2048: Must be index or base register
 				
 				;  ПРОВЕРКА АДРЕСАЦИИ С УЧЕТОМ СЕГМЕНТОВ
 				;  Переопределение сегмента
 				;  ------ вариант 1
- 003C  B8 ---- R		          mov  ax, SEG vec2
- 003F  8E C0			          mov  es, ax
- 0041  26: 8B 07		          mov  ax, es:[bx]
- 0044  B8 0000				  mov  ax, 0
+ 0048  B8 ---- R		          mov  ax, SEG vec2
+ 004B  8E C0			          mov  es, ax
+ 004D  26: 8B 07		          mov  ax, es:[bx]
+ 0050  B8 0000				  mov  ax, 0
 				;  ------ вариант 2
- 0047  8E C0			          mov  es, ax
- 0049  1E			          push ds
- 004A  07			          pop  es
- 004B  26: 8B 4F FF		          mov  cx, es:[bx-1]
- 004F  91			          xchg cx,ax
+ 0053  8E C0			          mov  es, ax
+ 0055  1E			          push ds
+ 0056  07			          pop  es
+ 0057  26: 8B 4F FF		          mov  cx, es:[bx-1]
+ 005B  91			          xchg cx,ax
 				;  ------ вариант 3
- 0050  BF 0002			          mov  di,ind
- 0053  26: 89 01		          mov  es:[bx+di],ax
+ 005C  BF 0002			          mov  di,ind
+ 005F  26: 89 01		          mov  es:[bx+di],ax
 				;  ------ вариант 4
- 0056  8B EC			          mov  bp,sp
+ 0062  8B EC			          mov  bp,sp
 				;          mov  ax,matr[bp+bx]
+				; TODO
+ 0064  03 DD			add bx, bp
+ 0066  8B 87 0016 R		mov ax, matr[bx]
+LR2ERR.ASM(96): warning A4031: Operand types must match
 				;          mov  ax,matr[bp+di+si]
+				; TODO
+Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:47:48
+                                                             Page     1-3
+
+
+ 006A  2B DB			sub bx,bx
+ 006C  03 DD			add bx,bp
+ 006E  03 DF			add bx,di
+ 0070  8B 80 0016 R		mov ax,matr[bx+si]
+LR2ERR.ASM(102): warning A4031: Operand types must match
 				;  Использование сегмента стека
- 0058  FF 36 0000 R		          push  mem1
- 005C  FF 36 0002 R		          push  mem2
- 0060  8B EC			          mov   bp,sp
- 0062  8B 56 02			          mov   dx,[bp]+2
- 0065  CB			          ret   
- 0066				Main      ENDP
- 0066				CODE      ENDS
+ 0074  FF 36 0000 R		          push  mem1
+ 0078  FF 36 0002 R		          push  mem2
+ 007C  8B EC			          mov   bp,sp
+ 007E  8B 56 02			          mov   dx,[bp]+2
+ 0081  CB			          ret   
+ 0082				Main      ENDP
+ 0082				CODE      ENDS
 				          END Main
-Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:05:46
+Microsoft (R) Macro Assembler Version 5.10                  10/9/25 17:47:48
                                                              Symbols-1
 
 
@@ -123,7 +146,7 @@ Segments and Groups:
                 N a m e         	Length	 Align	Combine Class
 
 ASTACK . . . . . . . . . . . . .  	0018	PARA	STACK	
-CODE . . . . . . . . . . . . . .  	0066	PARA	NONE	
+CODE . . . . . . . . . . . . . .  	0082	PARA	NONE	
 DATA . . . . . . . . . . . . . .  	0026	PARA	NONE	
 
 Symbols:            
@@ -134,7 +157,7 @@ EOL  . . . . . . . . . . . . . .  	NUMBER	0024
 
 IND  . . . . . . . . . . . . . .  	NUMBER	0002	
 
-MAIN . . . . . . . . . . . . . .  	F PROC	0000	CODE	Length = 0066
+MAIN . . . . . . . . . . . . . .  	F PROC	0000	CODE	Length = 0082
 MATR . . . . . . . . . . . . . .  	L BYTE	0016	DATA
 MEM1 . . . . . . . . . . . . . .  	L WORD	0000	DATA
 MEM2 . . . . . . . . . . . . . .  	L WORD	0002	DATA
@@ -147,15 +170,15 @@ VEC1 . . . . . . . . . . . . . .  	L BYTE	0006	DATA
 VEC2 . . . . . . . . . . . . . .  	L BYTE	000E	DATA
 
 @CPU . . . . . . . . . . . . . .  	TEXT  0101h		
-@FILENAME  . . . . . . . . . . .  	TEXT  LR2_COMP		
+@FILENAME  . . . . . . . . . . .  	TEXT  LR2ERR		
 @VERSION . . . . . . . . . . . .  	TEXT  510		
 
 
-     96 Source  Lines
-     96 Total   Lines
+    111 Source  Lines
+    111 Total   Lines
      19 Symbols
 
-  47822 + 459438 Bytes symbol space free
+  47814 + 459446 Bytes symbol space free
 
-      2 Warning Errors
-      0 Severe  Errors
+      4 Warning Errors
+      2 Severe  Errors

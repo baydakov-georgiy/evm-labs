@@ -22,6 +22,7 @@ mem2      DW    0
 mem3      DW    0
 vec1      DB    1,2,3,4,8,7,6,5
 vec2      DB    10,20,-10,-20,-30,-40,30,40
+vec3      DB    255,20
 matr      DB    1,2,3,4,-4,-3,-2,-1,5,6,7,8,-8,-7,1,-5
 
 DATA      ENDS
@@ -41,29 +42,38 @@ Main      PROC  FAR
 
 ;  ПРОВЕРКА РЕЖИМОВ АДРЕСАЦИИ НА УРОВНЕ СМЕЩЕНИЙ
 ;  Регистровая адресация
+          sub bx, bx
+          mov al,vec3[bx]
           mov  ax,n1
           mov  cx,ax
           mov  bl,EOL
           mov  bh,n2
 ;  Прямая   адресация
           mov  mem2,n2
-          mov  bx,OFFSET vec1
+          mov  bx, OFFSET vec1
           mov  mem1,ax
 ;  Косвенная адресация
           mov  al,[bx]
 ;          mov  mem3,[bx]
+; TODO
+mov bx, [bx]
+mov mem3,bx
 ;  Базированная адресация
           mov  al,[bx]+3
           mov  cx,3[bx]
 ;  Индексированная адресация
           mov  di,ind
           mov  al,vec2[di]
-          mov  cx,vec2[di]
+          mov  cx, word ptr vec2[di]
 ;  Адресация с базированием и индексированием
           mov  bx,3
           mov  al,matr[bx][di]
           mov  cx,matr[bx][di]
 ;          mov  ax,matr[bx*4][di]
+; TODO
+mov cl, 2
+shl bl, cl
+mov ax, word ptr matr[bx][di]
 
 ;  ПРОВЕРКА АДРЕСАЦИИ С УЧЕТОМ СЕГМЕНТОВ
 ;  Переопределение сегмента
@@ -84,7 +94,15 @@ Main      PROC  FAR
 ;  ------ вариант 4
           mov  bp,sp
 ;          mov  ax,matr[bp+bx]
+; TODO
+add bx, bp
+mov ax, word ptr matr[bx]
 ;          mov  ax,matr[bp+di+si]
+; TODO
+sub bx,bx
+add bx,bp
+add bx,di
+mov ax, word ptr matr[bx+si]
 ;  Использование сегмента стека
           push  mem1
           push  mem2
